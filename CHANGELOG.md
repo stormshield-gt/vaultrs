@@ -35,6 +35,10 @@ and this project adheres to
 - Wrong name for `derived` filed in `CreateKeyRequest`.
 - RUSTSEC-2023-0052 by bumping aws modules to the latest version.
 
+### Added
+
+- Generate intermediate CSR using existing issuer (see `cert::ca::int::cross_sign`)
+
 ## [0.7.0] - 2023-03-25
 
 ### Added

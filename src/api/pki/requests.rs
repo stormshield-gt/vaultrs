@@ -436,7 +436,7 @@ pub struct GenerateIntermediateRequest {
 /// private key generated via /pki/intermediate/generate. The certificate should
 /// be submitted in PEM format.
 ///
-/// * Path: {{self.mount}/intermediate/set-signed
+/// * Path: {self.mount}/intermediate/set-signed
 /// * Method: POST
 /// * Response: N/A
 /// * Reference: <https://developer.hashicorp.com/vault/api-docssecret/pki#set-signed-intermediate>

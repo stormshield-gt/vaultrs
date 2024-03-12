@@ -10,9 +10,14 @@ use std::{collections::HashMap, fmt::Debug};
 ///
 /// This endpoint creates or updates a group.
 ///
+/// Note that it's not possible to set the ID to update an existing group, [`identity::group::update_by_id`]
+/// is the function to call for that use case.
+///
 /// * Path: identity/group
 /// * Method: POST
 /// * Reference: https://developer.hashicorp.com/vault/api-docs/secret/identity/group#create-a-group
+///
+/// [`identity::group::update_by_id`]: crate::identity::group::update_by_id
 #[derive(Builder, Debug, Default, Endpoint, Serialize)]
 #[endpoint(
     path = "identity/group",
@@ -24,8 +29,6 @@ use std::{collections::HashMap, fmt::Debug};
 pub struct CreateGroupRequest {
     /// Name of the group. If set (and ID is not set), updates the corresponding existing group.
     pub name: Option<String>,
-    /// ID of the group. If set, updates the corresponding existing group.
-    pub id: Option<String>,
     /// Type of the group, internal or external. Defaults to internal.
     #[serde(rename = "type")]
     pub group_type: Option<String>,

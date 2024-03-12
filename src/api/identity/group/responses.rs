@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Debug, Serialize)]
 pub struct CreateGroupResponse {
     pub id: String,
-    pub name: Option<String>,
+    pub name: String,
 }
 
 /// Response from executing
@@ -21,10 +21,12 @@ pub struct ReadGroupByIdResponse {
     pub last_update_time: String,
     pub member_entity_ids: Vec<String>,
     pub member_group_ids: Option<Vec<String>>,
+    pub parent_group_ids: Option<Vec<String>>,
     pub metadata: Option<HashMap<String, String>>,
     pub modify_index: u64,
+    pub namespace_id: String,
     pub name: String,
-    pub policies: Vec<String>,
+    pub policies: Option<Vec<String>>,
     #[serde(rename = "type")]
     pub group_type: String,
 }
@@ -47,10 +49,12 @@ pub struct ReadGroupByNameResponse {
     pub last_update_time: String,
     pub member_entity_ids: Vec<String>,
     pub member_group_ids: Option<Vec<String>>,
+    pub parent_group_ids: Option<Vec<String>>,
     pub metadata: Option<HashMap<String, String>>,
     pub modify_index: u64,
+    pub namespace_id: String,
     pub name: String,
-    pub policies: Vec<String>,
+    pub policies: Option<Vec<String>>,
     #[serde(rename = "type")]
     pub group_type: String,
 }

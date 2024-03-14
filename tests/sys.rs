@@ -1,10 +1,14 @@
 mod common;
+mod vault_prod_container;
 
-use common::{VaultServer, VaultServerHelper};
+use std::collections::HashMap;
+
+use common::{VaultServer, VaultServerHelper, PORT, VERSION};
+use dockertest_server::Test;
 use test_log::test;
 use vaultrs::{
     api::{sys::requests::ListMountsRequest, ResponseWrapper},
-    client::Client,
+    client::{Client, VaultClient, VaultClientSettingsBuilder},
     error::ClientError,
     sys,
 };
@@ -23,7 +27,7 @@ fn test() {
         test_health(&client).await;
 
         // Test initialization
-        test_start_initialization(&client).await;
+        test_start_initialization_failure(&client).await;
 
         // Test status
         test_status(&client).await;
@@ -50,6 +54,22 @@ fn test() {
     });
 }
 
+#[test]
+fn sys_init() {
+    let test = new_prod_test();
+    test.run(|instance| async move {
+        let server: vault_prod_container::VaultServer = instance.server();
+        let client = VaultClient::new(
+            VaultClientSettingsBuilder::default()
+                .address(server.external_url())
+                .build()
+                .unwrap(),
+        )
+        .unwrap();
+        test_start_initialization(&client).await;
+    });
+}
+
 async fn test_wrap(client: &impl Client) {
     let endpoint = ListMountsRequest::builder().build().unwrap();
     let wrap_resp = endpoint.wrap(client).await;
@@ -71,7 +91,7 @@ async fn test_health(client: &impl Client) {
     assert!(resp.is_ok());
 }
 
-async fn test_start_initialization(client: &impl Client) {
+async fn test_start_initialization_failure(client: &impl Client) {
     let resp = sys::start_initialization(client, 1, 1, None)
         .await
         .unwrap_err();
@@ -79,6 +99,11 @@ async fn test_start_initialization(client: &impl Client) {
         panic!("must return an error because already initialized")
     };
     assert_eq!(code, 400);
+}
+
+async fn test_start_initialization(client: &impl Client) {
+    let resp = sys::start_initialization(client, 1, 1, None).await.unwrap();
+    assert_eq!(resp.keys.len(), 1);
 }
 
 async fn test_seal(client: &impl Client) {
@@ -191,4 +216,37 @@ mod tools {
         .unwrap();
         assert!(!random.random_bytes.is_empty());
     }
+}
+
+// Sets up a new test using the vault production server.
+pub fn new_prod_test() -> Test {
+    let mut test = Test::default();
+    let vault_config = serde_json::json!({
+        "listener": [
+            {
+                "tcp": {
+                    "address": "0.0.0.0:8300",
+                    "tls_disable": "true"
+                }
+            }
+        ],
+        "storage": [
+            {
+                "file": {
+                    "path": "/vault/file"
+                }
+            }
+        ],
+        "disable_mlock": true
+
+    });
+    let env = HashMap::from([("VAULT_LOCAL_CONFIG".to_string(), vault_config.to_string())]);
+    let config = vault_prod_container::VaultServerConfig::builder()
+        .port(PORT)
+        .version(VERSION.into())
+        .env(env)
+        .build()
+        .unwrap();
+    test.register(config);
+    test
 }

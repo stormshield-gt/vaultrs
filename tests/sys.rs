@@ -40,6 +40,9 @@ fn test() {
 
         // Test sealing
         test_seal(&client).await;
+
+        // Test tools
+        crate::tools::test_random(&client).await;
     });
 }
 
@@ -132,5 +135,46 @@ mod policy {
 
         let resp = policy::set(client, "test", policy).await;
         assert!(resp.is_ok());
+    }
+}
+
+mod tools {
+    use super::Client;
+    use vaultrs::{api::sys::requests::RandomRequestBuilder, sys::tools};
+    pub async fn test_random(client: &impl Client) {
+        let random = tools::random(client, None).await.unwrap();
+        assert!(!random.random_bytes.is_empty());
+
+        let random = tools::random(
+            client,
+            Some(&mut RandomRequestBuilder::default().bytes(3u64)),
+        )
+        .await
+        .unwrap();
+        assert!(!random.random_bytes.is_empty());
+
+        let random = tools::random(
+            client,
+            Some(&mut RandomRequestBuilder::default().source("platform")),
+        )
+        .await
+        .unwrap();
+        assert!(!random.random_bytes.is_empty());
+
+        let random = tools::random(
+            client,
+            Some(&mut RandomRequestBuilder::default().format("base64")),
+        )
+        .await
+        .unwrap();
+        assert!(!random.random_bytes.is_empty());
+
+        let random = tools::random(
+            client,
+            Some(&mut RandomRequestBuilder::default().format("hex")),
+        )
+        .await
+        .unwrap();
+        assert!(!random.random_bytes.is_empty());
     }
 }

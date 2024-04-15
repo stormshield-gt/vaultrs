@@ -1,7 +1,7 @@
 use super::responses::{
     AuthResponse, GetConfigurationOfTheSecretEngineResponse, ListPoliciesResponse, MountResponse,
-    ReadHealthResponse, ReadPolicyResponse, StartInitializationResponse, UnsealResponse,
-    WrappingLookupResponse,
+    RandomResponse, ReadHealthResponse, ReadPolicyResponse, StartInitializationResponse,
+    UnsealResponse, WrappingLookupResponse,
 };
 use rustify_derive::Endpoint;
 use serde::Serialize;
@@ -339,4 +339,26 @@ pub struct CreatePolicyRequest {
 #[builder(setter(into), default)]
 pub struct DeletePolicyRequest {
     pub name: String,
+}
+
+/// ## Generate random bytes
+/// This endpoint returns high-quality random bytes of the specified length.
+///
+/// * Path: /sys/tools/random
+/// * Method: POST
+/// * Response: [RandomResponse]
+/// * Reference: <https://developer.hashicorp.com/vault/api-docs/system/tools#generate-random-bytes>
+
+#[derive(Builder, Default, Endpoint)]
+#[endpoint(
+    path = "/sys/tools/random",
+    method = "POST",
+    response = "RandomResponse",
+    builder = "true"
+)]
+#[builder(setter(into, strip_option), default)]
+pub struct RandomRequest {
+    pub bytes: Option<u64>,
+    pub format: Option<String>,
+    pub source: Option<String>,
 }

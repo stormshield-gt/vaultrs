@@ -124,6 +124,7 @@ pub struct SignCertificateRequest {
     pub serial_number: Option<String>,
     pub ttl: Option<String>,
     pub uri_sans: Option<String>,
+    pub remove_roots_from_chain: Option<bool>,
 }
 
 /// ## Sign Intermediate
@@ -266,6 +267,7 @@ pub struct GenerateCertificateRequest {
     pub private_key_format: Option<String>,
     pub ttl: Option<String>,
     pub uri_sans: Option<String>,
+    pub remove_roots_from_chain: Option<bool>,
 }
 
 /// ## Revoke Certificate

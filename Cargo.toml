@@ -40,16 +40,19 @@ tracing = { version = "0.1.37", features = ["log"] }
 base64 = "0.21"
 chrono = "0.4.38"
 data-encoding = "2.3.3"
-tokio-test = "0.4.2"
+# tokio-test = "0.4.2"
 tracing-subscriber = { version = "0.3.16", default-features = false, features = ["env-filter", "fmt"] }
-tracing-test = "0.2.4"
+# tracing-test = "0.2.4"
 test-log = { version = "0.2.11", features = ["trace"] }
 env_logger = "0.10.0"
-dockertest = "0.3.0"
-dockertest-server = { version = "0.1.7", features = ["hashi", "database", "webserver", "cloud"] }
+# dockertest = "0.3.0"
+# dockertest-server = { version = "0.1.7", features = ["hashi", "database", "webserver", "cloud"] }
+testcontainers = "0.23.1"
+testcontainers-modules = { version = "0.11.3", features = ["localstack", "postgres"] }
 jwt = "0.16.0"
 sha2 = "0.10.6"
 hmac = "0.12.1"
 serial_test = "1.0.0"
 rcgen = "0.12.1"
 tempfile = "3.10.1"
+tokio = { version = "1.40.0", features = ["full"] }

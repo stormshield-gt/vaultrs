@@ -167,6 +167,7 @@ pub struct SignIntermediateRequest {
     pub ttl: Option<String>,
     pub uri_sans: Option<String>,
     pub use_csr_values: Option<bool>,
+    pub signature_bits: Option<u64>,
 }
 
 /// ## Sign Self-Issued
@@ -616,6 +617,7 @@ pub struct SetRoleRequest {
     pub ttl: Option<String>,
     pub use_csr_common_name: Option<bool>,
     pub use_csr_sans: Option<bool>,
+    pub signature_bits: Option<u64>,
 }
 
 /// ## Delete Role

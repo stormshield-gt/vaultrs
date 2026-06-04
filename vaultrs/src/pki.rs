@@ -549,6 +549,43 @@ pub mod issuer {
         api::exec_with_empty(client, endpoint).await
     }
 
+    pub mod cert {
+        use crate::{
+            api::{
+                self,
+                pki::{
+                    requests::{
+                        IssuerGenerateCertificateRequest, IssuerGenerateCertificateRequestBuilder,
+                    },
+                    responses::IssuerGenerateCertificateResponse,
+                },
+            },
+            client::Client,
+            error::ClientError,
+        };
+
+        /// Generates a certificate using the given role, issuer and options
+        ///
+        /// See [IssuerGenerateCertificateRequest]
+        pub async fn generate(
+            client: &impl Client,
+            mount: &str,
+            role: &str,
+            issuer_ref: &str,
+            opts: Option<&mut IssuerGenerateCertificateRequestBuilder>,
+        ) -> Result<IssuerGenerateCertificateResponse, ClientError> {
+            let mut t = IssuerGenerateCertificateRequest::builder();
+            let endpoint = opts
+                .unwrap_or(&mut t)
+                .mount(mount)
+                .role(role)
+                .issuer_ref(issuer_ref)
+                .build()
+                .unwrap();
+            api::exec_with_result(client, endpoint).await
+        }
+    }
+
     pub mod int {
         use crate::{
             api::{

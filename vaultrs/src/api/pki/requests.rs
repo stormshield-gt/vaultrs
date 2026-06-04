@@ -1,11 +1,12 @@
 use super::responses::{
     CrossSignResponse, GenerateCertificateResponse, GenerateIntermediateCSRResponse,
     GenerateIntermediateResponse, GenerateRootResponse, ImportIssuerResponse,
-    ListCertificatesResponse, ListIssuersResponse, ListRolesResponse, ReadCRLConfigResponse,
-    ReadCertificateResponse, ReadIssuerCertificateResponse, ReadRoleResponse, ReadURLsResponse,
-    RevokeCertificateResponse, RotateCRLsResponse, SetDefaultIssuerResponse,
-    SignCertificateResponse, SignIntermediateIssuerResponse, SignIntermediateResponse,
-    SignSelfIssuedResponse, UpdateIssuerResponse,
+    IssuerGenerateCertificateResponse, ListCertificatesResponse, ListIssuersResponse,
+    ListRolesResponse, ReadCRLConfigResponse, ReadCertificateResponse,
+    ReadIssuerCertificateResponse, ReadRoleResponse, ReadURLsResponse, RevokeCertificateResponse,
+    RotateCRLsResponse, SetDefaultIssuerResponse, SignCertificateResponse,
+    SignIntermediateIssuerResponse, SignIntermediateResponse, SignSelfIssuedResponse,
+    UpdateIssuerResponse,
 };
 use rustify_derive::Endpoint;
 use serde::Serialize;
@@ -270,6 +271,8 @@ pub struct GenerateCertificateRequest {
     pub ttl: Option<String>,
     pub uri_sans: Option<String>,
     pub remove_roots_from_chain: Option<bool>,
+    pub key_type: Option<String>,
+    pub key_bits: Option<u64>,
 }
 
 /// ## Revoke Certificate
@@ -901,6 +904,45 @@ pub struct GenerateIntermediateCSRRequest {
     pub signature_bits: u16,
     pub street_address: Option<Vec<String>>,
     pub uri_sans: Option<String>,
+}
+
+/// ## Generate Certificate
+/// This endpoint generates a new set of credentials (private key and
+/// certificate) based on the role named in the endpoint. The issuing CA
+/// certificate is returned as well, so that only the root CA need be in a
+/// client's trust store.
+///
+/// * Path: {self.mount}/issuer/{self.issuer_ref}/issue/{self.role}
+/// * Method: POST
+/// * Response: [IssuerGenerateCertificateResponse]
+/// * Reference: <https://developer.hashicorp.com/vault/api-docssecret/pki#read-certificate>
+#[derive(Builder, Debug, Default, Endpoint)]
+#[endpoint(
+    path = "{self.mount}/issuer/{self.issuer_ref}/issue/{self.role}",
+    method = "POST",
+    response = "IssuerGenerateCertificateResponse",
+    builder = "true"
+)]
+#[builder(setter(into, strip_option), default)]
+pub struct IssuerGenerateCertificateRequest {
+    #[endpoint(skip)]
+    pub mount: String,
+    #[endpoint(skip)]
+    pub issuer_ref: String,
+    #[endpoint(skip)]
+    pub role: String,
+    pub alt_names: Option<String>,
+    pub common_name: Option<String>,
+    pub exclude_cn_from_sans: Option<bool>,
+    pub format: Option<String>,
+    pub ip_sans: Option<String>,
+    pub other_sans: Option<Vec<String>>,
+    pub private_key_format: Option<String>,
+    pub ttl: Option<String>,
+    pub uri_sans: Option<String>,
+    pub remove_roots_from_chain: Option<bool>,
+    pub key_type: Option<String>,
+    pub key_bits: Option<u64>,
 }
 
 /// ## Delete key

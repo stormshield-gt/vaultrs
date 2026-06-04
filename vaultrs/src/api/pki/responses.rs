@@ -282,3 +282,14 @@ pub struct IssuerGenerateCertificateResponse {
     pub private_key_type: String,
     pub serial_number: String,
 }
+
+/// Response from executing
+/// [IssuerSignCertificateRequest][crate::api::pki::requests::IssuerSignCertificateRequest]
+#[derive(Deserialize, Debug, Serialize)]
+pub struct IssuerSignCertificateResponse {
+    pub ca_chain: Option<Vec<String>>,
+    pub certificate: String,
+    pub issuing_ca: String,
+    pub serial_number: String,
+    pub expiration: u64,
+}

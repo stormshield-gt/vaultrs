@@ -1,8 +1,8 @@
 use super::responses::{
     CrossSignResponse, GenerateCertificateResponse, GenerateIntermediateCSRResponse,
     GenerateIntermediateResponse, GenerateRootResponse, ImportIssuerResponse,
-    IssuerGenerateCertificateResponse, ListCertificatesResponse, ListIssuersResponse,
-    ListRolesResponse, ReadCRLConfigResponse, ReadCertificateResponse,
+    IssuerGenerateCertificateResponse, IssuerSignCertificateResponse, ListCertificatesResponse,
+    ListIssuersResponse, ListRolesResponse, ReadCRLConfigResponse, ReadCertificateResponse,
     ReadIssuerCertificateResponse, ReadRoleResponse, ReadURLsResponse, RevokeCertificateResponse,
     RotateCRLsResponse, SetDefaultIssuerResponse, SignCertificateResponse,
     SignIntermediateIssuerResponse, SignIntermediateResponse, SignSelfIssuedResponse,
@@ -943,6 +943,44 @@ pub struct IssuerGenerateCertificateRequest {
     pub remove_roots_from_chain: Option<bool>,
     pub key_type: Option<String>,
     pub key_bits: Option<u64>,
+}
+
+/// ## Sign Certificate
+/// This endpoint signs a new certificate based upon the provided CSR and the
+/// supplied parameters, subject to the restrictions contained in the role named
+/// in the endpoint. The issuing CA certificate is returned as well, so that
+/// only the root CA need be in a client's trust store.
+///
+/// * Path: {self.mount}/issuer/{self.issuer_ref}/sign/{self.role}
+/// * Method: POST
+/// * Response: [IssuerSignCertificateResponse]
+/// * Reference: <https://developer.hashicorp.com/vault/api-docssecret/pki#sign-certificate>
+#[derive(Builder, Debug, Default, Endpoint)]
+#[endpoint(
+    path = "{self.mount}/issuer/{self.issuer_ref}/sign/{self.role}",
+    method = "POST",
+    response = "IssuerSignCertificateResponse",
+    builder = "true"
+)]
+#[builder(setter(into, strip_option), default)]
+pub struct IssuerSignCertificateRequest {
+    #[endpoint(skip)]
+    pub mount: String,
+    #[endpoint(skip)]
+    pub role: String,
+    #[endpoint(skip)]
+    pub issuer_ref: String,
+    pub alt_names: Option<String>,
+    pub common_name: Option<String>,
+    pub csr: Option<String>,
+    pub exclude_cn_from_sans: Option<bool>,
+    pub format: Option<String>,
+    pub ip_sans: Option<String>,
+    pub other_sans: Option<Vec<String>>,
+    pub serial_number: Option<String>,
+    pub ttl: Option<String>,
+    pub uri_sans: Option<String>,
+    pub remove_roots_from_chain: Option<bool>,
 }
 
 /// ## Delete key

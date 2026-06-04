@@ -556,8 +556,9 @@ pub mod issuer {
                 pki::{
                     requests::{
                         IssuerGenerateCertificateRequest, IssuerGenerateCertificateRequestBuilder,
+                        IssuerSignCertificateRequest, IssuerSignCertificateRequestBuilder,
                     },
-                    responses::IssuerGenerateCertificateResponse,
+                    responses::{IssuerGenerateCertificateResponse, IssuerSignCertificateResponse},
                 },
             },
             client::Client,
@@ -580,6 +581,31 @@ pub mod issuer {
                 .mount(mount)
                 .role(role)
                 .issuer_ref(issuer_ref)
+                .build()
+                .unwrap();
+            api::exec_with_result(client, endpoint).await
+        }
+
+        /// Signs a certificate
+        ///
+        /// See [IssuerSignCertificateRequest]
+        pub async fn sign(
+            client: &impl Client,
+            mount: &str,
+            role: &str,
+            issuer_ref: &str,
+            csr: &str,
+            common_name: &str,
+            opts: Option<&mut IssuerSignCertificateRequestBuilder>,
+        ) -> Result<IssuerSignCertificateResponse, ClientError> {
+            let mut t = IssuerSignCertificateRequest::builder();
+            let endpoint = opts
+                .unwrap_or(&mut t)
+                .mount(mount)
+                .issuer_ref(issuer_ref)
+                .role(role)
+                .csr(csr)
+                .common_name(common_name)
                 .build()
                 .unwrap();
             api::exec_with_result(client, endpoint).await

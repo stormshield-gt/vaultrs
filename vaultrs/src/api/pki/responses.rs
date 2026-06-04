@@ -269,3 +269,16 @@ pub struct GenerateIntermediateCSRResponse {
     pub csr: String,
     pub key_id: Option<String>,
 }
+
+/// Response from executing
+/// [GenerateCertificateRequest][crate::api::pki::requests::GenerateCertificateRequest]
+#[derive(Deserialize, Debug, Serialize)]
+pub struct IssuerGenerateCertificateResponse {
+    pub ca_chain: Option<Vec<String>>,
+    pub certificate: String,
+    pub expiration: Option<u64>,
+    pub issuing_ca: String,
+    pub private_key: String,
+    pub private_key_type: String,
+    pub serial_number: String,
+}
